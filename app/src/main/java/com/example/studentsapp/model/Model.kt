@@ -4,11 +4,19 @@ object Model {
     // The shared data structure
     val students: MutableList<Student> = ArrayList()
 
-    // Stub for future mock data generation
     init {
-        // TODO: Person A adds mock data here later
+        // Generating 10 mock students
+        for (i in 0..20) {
+            val student = Student(
+                name = "Student $i",
+                id = "$i",
+                phone = "050-00000$i",
+                address = "Street $i, City",
+                isChecked = false
+            )
+            students.add(student)
+        }
     }
-
     // --- Interface Methods ---
 
     fun getAllStudents(): MutableList<Student> {
