@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.studentsapp.R
 import com.example.studentsapp.model.Student
 
-class StudentsRecyclerAdapter(private var students: MutableList<Student>?) :
-    RecyclerView.Adapter<StudentsRecyclerAdapter.StudentViewHolder>() {
+class StudentsRecyclerAdapter(
+    private var students: MutableList<Student>?
+) : RecyclerView.Adapter<StudentsRecyclerAdapter.StudentViewHolder>() {
 
     var listener: OnItemClickListener? = null
 
@@ -27,43 +28,51 @@ class StudentsRecyclerAdapter(private var students: MutableList<Student>?) :
     override fun getItemCount(): Int = students?.size ?: 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(
-            R.layout.student_list_row,
-            parent,
-            false
-        )
-        return StudentViewHolder(itemView, listener)
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.student_list_row, parent, false)
+        return StudentViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val student = students?.get(position)
-        holder.bind(student, position)
+        holder.bind(student)
     }
 
-    inner class StudentViewHolder(
-        itemView: View,
-        listener: OnItemClickListener?
-    ) : RecyclerView.ViewHolder(itemView) {
+    inner class StudentViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
-        private val nameTextView: TextView = itemView.findViewById(R.id.student_row_name)
-        private val idTextView: TextView = itemView.findViewById(R.id.student_row_id)
-        private val checkBox: CheckBox = itemView.findViewById(R.id.student_row_check)
+        private val nameTextView: TextView =
+            itemView.findViewById(R.id.student_row_name)
+        private val idTextView: TextView =
+            itemView.findViewById(R.id.student_row_id)
+        private val checkBox: CheckBox =
+            itemView.findViewById(R.id.student_row_check)
 
         init {
             itemView.setOnClickListener {
-                listener?.onItemClick(adapterPosition)
-            }
-            
-            checkBox.setOnClickListener { 
-                listener?.onStudentCheck(adapterPosition)
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    listener?.onItemClick(pos)
+                }
             }
         }
 
-        fun bind(student: Student?, position: Int) {
-            student?.let {
-                nameTextView.text = it.name
-                idTextView.text = "ID: ${it.id}"
-                checkBox.isChecked = it.isChecked
+        fun bind(student: Student?) {
+            student ?: return
+
+            nameTextView.text = student.name
+            idTextView.text = "ID: ${student.id}"
+
+            // ❗ חשוב: ניתוק listener לפני שינוי מצב
+            checkBox.setOnCheckedChangeListener(null)
+            checkBox.isChecked = student.isChecked
+
+            // חיבור מחדש בצורה בטוחה
+            checkBox.setOnCheckedChangeListener { _, _ ->
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    listener?.onStudentCheck(pos)
+                }
             }
         }
     }
