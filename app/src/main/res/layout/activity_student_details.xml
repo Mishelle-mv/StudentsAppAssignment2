@@ -61,7 +61,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="checked"
-            android:enabled="false" />
+            android:enabled="false"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btn_details_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EDIT" />
 
     </LinearLayout>
 </ScrollView>
